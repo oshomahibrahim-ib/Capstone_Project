@@ -1,0 +1,8 @@
+{% block content %}
+<h2>Dashboard</h2>
+
+{% for report in reports %}
+    <p>{{ report.location_region }} - {{ report.created_at }}</p>
+{% endfor %}
+
+{% endblock %}
