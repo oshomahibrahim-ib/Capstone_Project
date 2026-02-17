@@ -6,3 +6,30 @@
 {% endfor %}
 
 {% endblock %}
+
+from django.db.models import Sum
+
+@login_required
+def dashboard(request):
+    if request.user.is_staff:
+        symptom_reports = SymptomReport.objects.all().order_by('-created_at')
+        health_reports = HealthReport.objects.all().order_by('-date_reported')
+
+        total_cases = HealthReport.objects.aggregate(
+            total=Sum('number_of_cases')
+        )['total']
+
+        return render(request, 'medysinc/dashboard.html', {
+            'symptom_reports': symptom_reports,
+            'health_reports': health_reports,
+            'total_cases': total_cases
+        })
+
+    else:
+        symptom_reports = SymptomReport.objects.filter(
+            user=request.user
+        ).order_by('-created_at')
+
+        return render(request, 'medysinc/dashboard.html', {
+            'symptom_reports': symptom_reports
+        })
