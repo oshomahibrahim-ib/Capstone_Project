@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import SymptomReport, Symptom
 from .forms import SymptomReportForm
+from .utils import detect_outbreaks
+
 
 # This helper function checks if the user is a health worker
 def is_health_worker(user):

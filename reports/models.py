@@ -33,6 +33,7 @@ class HealthReport(models.Model):
     number_of_deaths = models.PositiveIntegerField(default=0)
     reported_by = models.ForeignKey(User, on_delete=models.CASCADE)
     date_reported = models.DateTimeField(auto_now_add=True)
+    symptoms = models.ManyToManyField(Symptom)
 
     def __str__(self):
         return f"{self.disease_name} - {self.region}"

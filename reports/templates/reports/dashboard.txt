@@ -33,3 +33,50 @@ def dashboard(request):
         return render(request, 'medysinc/dashboard.html', {
             'symptom_reports': symptom_reports
         })
+
+{% if outbreak_alerts %}
+<div class="alert alert-danger">
+    <strong>Outbreak Alert!</strong>
+    Possible outbreak detected in:
+    <ul>
+        {% for region in outbreak_alerts %}
+            <li>{{ region }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+@login_required
+def dashboard(request):
+
+    if request.user.is_health_worker:
+        reports = HealthReport.objects.all().order_by('-created_at')
+        outbreak_alerts = detect_outbreaks()
+    else:
+        reports = HealthReport.objects.filter(
+            user=request.user
+        ).order_by('-created_at')
+        outbreak_alerts = None
+
+    context = {
+        'reports': reports,
+        'outbreak_alerts': outbreak_alerts
+    }
+
+    return render(request, 'reports/dashboard.html', context)
+
+trend_data = symptom_trends()
+
+    context = {
+    'reports': reports,
+    'outbreak_alerts': outbreak_alerts,
+    'trend_data': trend_data
+}
+
+<h4>Symptom Trends (Last 7 Days)</h4>
+<ul>
+    {% for symptom, count in trend_data.items %}
+        <li>{{ symptom }} : {{ count }}</li>
+    {% endfor %}
+</ul>
+
